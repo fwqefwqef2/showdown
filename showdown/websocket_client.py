@@ -121,7 +121,7 @@ class PSWebsocketClient:
                 await self.send_message("groupchat-srbot-sinnohremakes", [str(loopnum)])
             loopnum += 1
             logger.debug(str(loopnum))
-            if loopnum == 2400:
+            if loopnum == 2000:
                 await self.send_message('groupchat-srbot-sinnohremakes', ["This message was sent to prevent the chat from dying."])
                 logger.debug("prevented chat death")
                 loopnum = 0
