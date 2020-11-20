@@ -3,10 +3,20 @@ import websockets
 import requests
 import json
 import time
+import config
+import sys
+import time
+
+from showdown.engine.evaluate import Scoring
+from showdown.battle import Pokemon
+from showdown.battle import LastUsedMove
+from showdown.battle_modifier import async_update_battle
+
+from threading import Thread
+from multiprocessing import Process
 
 import logging
 logger = logging.getLogger(__name__)
-
 
 class LoginError(Exception):
     pass
@@ -38,12 +48,10 @@ class PSWebsocketClient:
 
     async def receive_message(self):
         message = await self.websocket.recv()
-        logger.debug("Received message from websocket: {}".format(message))
         return message
 
     async def send_message(self, room, message_list):
         message = room + "|" + "|".join(message_list)
-        logger.debug("Sending message to websocket: {}".format(message))
         await self.websocket.send(message)
         self.last_message = message
 
@@ -81,10 +89,6 @@ class PSWebsocketClient:
         if response.status_code == 200:
             if self.password:
                 response_json = json.loads(response.text[1:])
-                if not response_json['actionsuccess']:
-                    logger.error("Login Unsuccessful")
-                    raise LoginError("Could not log-in")
-
                 assertion = response_json.get('assertion')
             else:
                 assertion = response.text
@@ -92,81 +96,32 @@ class PSWebsocketClient:
             message = ["/trn " + self.username + ",0," + assertion]
             logger.debug("Successfully logged in")
             await self.send_message('', message)
+			##keep the room alive
+            await self.send_message('', ["/avatar 178"])
+            logger.debug("Changed Avatar")
+            await self.send_message('', ["/join lobby"]) 
+            await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
+            logger.debug("joined srchat")
+
         else:
             logger.error("Could not log-in\nDetails:\n{}".format(response.content))
             raise LoginError("Could not log-in")
 
-    async def update_team(self, team):
-        message = ["/utm {}".format(team)]
-        await self.send_message('', message)
-
-    async def challenge_user(self, user_to_challenge, battle_format, team):
-        logger.debug("Challenging {}...".format(user_to_challenge))
-        if time.time() - self.last_challenge_time < 10:
-            logger.info("Sleeping for 10 seconds because last challenge was less than 10 seconds ago")
-            await asyncio.sleep(10)
-        await self.update_team(team)
-        message = ["/challenge {},{}".format(user_to_challenge, battle_format)]
-        await self.send_message('', message)
-        self.last_challenge_time = time.time()
-
-    async def accept_challenge(self, battle_format, team):
-        logger.debug("Waiting for a {} challenge".format(battle_format))
-        await self.update_team(team)
-        username = None
-        while username is None:
+    async def receive_pm(self):
+        logger.debug("awating pms")
+        loopnum = 0 #for the inactive timer
+        while True:
             msg = await self.receive_message()
+            logger.debug(msg)
             split_msg = msg.split('|')
-            if split_msg[1] == 'updatechallenges':
-                try:
-                    challenges = json.loads(split_msg[2])
-                    if challenges['challengesFrom'] is not None:
-                        username, challenge_format = next(iter(challenges['challengesFrom'].items()))
-                        if challenge_format != battle_format:
-                            username = None
-                except ValueError:
-                    username = None
-                except StopIteration:
-                    username = None
-
-        message = ["/accept " + username]
-        await self.send_message('', message)
-
-    async def search_for_match(self, battle_format, team):
-        logger.debug("Searching for ranked {} match".format(battle_format))
-        await self.update_team(team)
-        message = ["/search {}".format(battle_format)]
-        await self.send_message("", message)
-
-    async def leave_battle(self, battle_tag, save_replay=False):
-        if save_replay:
-            await self.save_replay(battle_tag)
-
-        message = ["/leave {}".format(battle_tag)]
-        await self.send_message('', message)
-
-        while True:
-            msg = await self.receive_message()
-            if battle_tag in msg and 'deinit' in msg:
-                return
-
-    async def save_replay(self, battle_tag):
-        message = ["/savereplay"]
-        await self.send_message(battle_tag, message)
-
-        while True:
-            msg = await self.receive_message()
-            if msg.startswith("|queryresponse|savereplay|"):
-                obj = json.loads(msg.replace("|queryresponse|savereplay|", ""))
-                log = obj['log']
-                identifier = obj['id']
-                post_response = requests.post(
-                    "https://play.pokemonshowdown.com/~~showdown/action.php?act=uploadreplay",
-                    data={
-                        "log": log,
-                        "id": identifier
-                    }
-                )
-                if post_response.status_code != 200:
-                    raise SaveReplayError("POST to save replay did not return a 200: {}".format(post_response.content))
-                break
+            if split_msg[1] == 'pm' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot':
+                await self.send_message("groupchat-srbot-sinnohremakes", ["/invite"+split_msg[2]])
+            loopnum += 1
+            logger.debug(str(loopnum))
+            if loopnum == 2400:
+                await self.send_message('groupchat-srbot-sinnohremakes', ["This message was sent to prevent the chat from dying."])
+                logger.debug("prevented chat death")
+                loopnum = 0
+			
+    async def accept_challenge(self):
+        await self.receive_pm()
