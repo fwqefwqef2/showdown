@@ -117,7 +117,7 @@ class PSWebsocketClient:
             split_msg = msg.split('|')
             if split_msg[1] == 'pm' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot':
                 await self.send_message("groupchat-srbot-sinnohremakes", ["/invite"+split_msg[2]])
-            if '!next' in msg and 'fwqef' in split_msg[2]:
+            if '-nextq' in msg:
                 await self.send_message("groupchat-srbot-sinnohremakes", [str(loopnum)])
             loopnum += 1
             logger.debug(str(loopnum))
