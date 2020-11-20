@@ -102,6 +102,7 @@ class PSWebsocketClient:
             await self.send_message('', ["/join lobby"]) 
             await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
             logger.debug("joined srchat")
+            await self.send_message('groupchat-srbot-sinnohremakes', ["This message was sent to prevent the chat from dying."])
 
         else:
             logger.error("Could not log-in\nDetails:\n{}".format(response.content))
@@ -116,6 +117,8 @@ class PSWebsocketClient:
             split_msg = msg.split('|')
             if split_msg[1] == 'pm' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot':
                 await self.send_message("groupchat-srbot-sinnohremakes", ["/invite"+split_msg[2]])
+            if '!next' in msg and 'fwqef' in split_msg[2]:
+                await self.send_message("groupchat-srbot-sinnohremakes", [str(loopnum)])
             loopnum += 1
             logger.debug(str(loopnum))
             if loopnum == 2400:
