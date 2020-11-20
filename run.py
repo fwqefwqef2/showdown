@@ -39,6 +39,8 @@ def parse_configs():
     config.team_name = env("TEAM_NAME", None)
     config.pokemon_mode = env("POKEMON_MODE", constants.DEFAULT_MODE)
     config.run_count = int(env("RUN_COUNT", 1))
+    #added below
+    config.target_elo = int(env("TARGET_ELO", 1))
 
     if config.bot_mode == constants.CHALLENGE_USER:
         config.user_to_challenge = env("USER_TO_CHALLENGE")
@@ -53,16 +55,16 @@ def check_dictionaries_are_unmodified(original_pokedex, original_move_json):
         with open("modified_moves.json", 'w') as f:
             json.dump(all_move_json, f, indent=4)
         exit(1)
-    else:
-        logger.debug("Move JSON unmodified!")
+    #else:
+        #logger.debug("Move JSON unmodified!")
 
     if original_pokedex != pokedex:
         logger.critical("Pokedex JSON changed!\nDumping modified version to `modified_pokedex.json`")
         with open("modified_pokedex.json", 'w') as f:
             json.dump(pokedex, f, indent=4)
         exit(1)
-    else:
-        logger.debug("Pokedex JSON unmodified!")
+    #else:
+        #logger.debug("Pokedex JSON unmodified!")
 
 
 async def showdown():
@@ -84,7 +86,7 @@ async def showdown():
         if config.bot_mode == constants.CHALLENGE_USER:
             await ps_websocket_client.challenge_user(config.user_to_challenge, config.pokemon_mode, team)
         elif config.bot_mode == constants.ACCEPT_CHALLENGE:
-            await ps_websocket_client.accept_challenge(config.pokemon_mode, team)
+            await ps_websocket_client.accept_challenge()
         elif config.bot_mode == constants.SEARCH_LADDER:
             await ps_websocket_client.search_for_match(config.pokemon_mode, team)
         else:
