@@ -1,0 +1,22 @@
+{
+  "name": "srchat",
+  "version": "1.0.0",
+  "description": "Showdown is a Pokémon battle-bot that can play battles on [Pokemon Showdown](https://pokemonshowdown.com/).",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fwqefwqef2/srchat.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fwqefwqef2/srchat/issues"
+  },
+  "homepage": "https://github.com/fwqefwqef2/srchat#readme"
+}
