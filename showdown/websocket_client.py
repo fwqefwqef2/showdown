@@ -103,6 +103,7 @@ class PSWebsocketClient:
             await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
             logger.debug("joined srchat")
             await self.send_message('groupchat-srbot-sinnohremakes', ["This message was sent to prevent the chat from dying."])
+            await self.send_message('groupchat-srbot-sinnohremakes', ["/hidetext SRbot"])
 
         else:
             logger.error("Could not log-in\nDetails:\n{}".format(response.content))
@@ -113,16 +114,27 @@ class PSWebsocketClient:
         loopnum = 0 #for the inactive timer
         while True:
             msg = await self.receive_message()
-            logger.debug(msg)
+            #logger.debug(msg)
             split_msg = msg.split('|')
+            #logger.debug(split_msg)
+			
             if split_msg[1] == 'pm' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot':
                 await self.send_message("groupchat-srbot-sinnohremakes", ["/invite"+split_msg[2]])
-            if '-nextq' in msg:
-                await self.send_message("groupchat-srbot-sinnohremakes", [str(loopnum)])
+            if split_msg[0] == '>groupchat-srbot-sinnohremakes\n':
+                #reset timer
+                loopnum = 0	
+				
+            if split_msg[0] == '>groupchat-srbot-sinnohremakes\n' and split_msg[1] == 'c:' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot': #chat msg
+                if '-say' in split_msg[4]: #-say /cood
+                    #say the thing after -say
+                    await self.send_message("groupchat-srbot-sinnohremakes", [split_msg[4][5:len(split_msg[4])]])
+					
             loopnum += 1
             logger.debug(str(loopnum))
+			
             if loopnum == 2000:
                 await self.send_message('groupchat-srbot-sinnohremakes', ["This message was sent to prevent the chat from dying."])
+                await self.send_message('groupchat-srbot-sinnohremakes', ["/hidetext SRbot"])
                 logger.debug("prevented chat death")
                 loopnum = 0
 			
