@@ -114,23 +114,27 @@ class PSWebsocketClient:
         loopnum = 0 #for the inactive timer
         while True:
             msg = await self.receive_message()
-            #logger.debug(msg)
+            logger.debug(msg)
             split_msg = msg.split('|')
-            #logger.debug(split_msg)
+            logger.debug(split_msg)
 			#if the message is not by server automod
             if len(split_msg) >= 3:
+                #case 1 - bot gets a pm
                 if split_msg[1] == 'pm' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot':
                     await self.send_message("groupchat-srbot-sinnohremakes", ["/invite"+split_msg[2]])
                 if split_msg[0] == '>groupchat-srbot-sinnohremakes\n':
                     #reset timer
                     loopnum = 0	
-				
-                if split_msg[0] == '>groupchat-srbot-sinnohremakes\n' and split_msg[1] == 'c:' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot': #chat msg
+				#case 2 - someone talks in srchat
+                if split_msg[1] == 'c:' and split_msg[0] == '>groupchat-srbot-sinnohremakes\n' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot': #chat msg
                     #if the msg is longer than "-say "
                     if len(split_msg[4]) > 5:
                         if split_msg[4][0:4] == "-say": #-say /cood
                             #send the thing after -say
                             await self.send_message("groupchat-srbot-sinnohremakes", [split_msg[4][5:len(split_msg[4])]])
+							
+                if split_msg[1] == 'error':
+                    await self.send_message("groupchat-srbot-sinnohremakes", ["Error: "+split_msg[2]])
 					
             loopnum += 1
             logger.debug(str(loopnum))
