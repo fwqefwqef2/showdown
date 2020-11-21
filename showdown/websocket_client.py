@@ -124,7 +124,6 @@ class PSWebsocketClient:
                     await self.send_message("groupchat-srbot-sinnohremakes", ["/invite"+split_msg[2]])
 				#case 2 - someone talks in srchat
                 if split_msg[1] == 'c:' and split_msg[0] == '>groupchat-srbot-sinnohremakes\n' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot': #chat msg
-                    loopnum = 0
                     #if the msg is longer than "-say "
                     if len(split_msg[4]) > 5:
                         if split_msg[4][0:4] == "-say": #-say /cood
