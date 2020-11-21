@@ -117,17 +117,20 @@ class PSWebsocketClient:
             #logger.debug(msg)
             split_msg = msg.split('|')
             #logger.debug(split_msg)
-			
-            if split_msg[1] == 'pm' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot':
-                await self.send_message("groupchat-srbot-sinnohremakes", ["/invite"+split_msg[2]])
-            if split_msg[0] == '>groupchat-srbot-sinnohremakes\n':
-                #reset timer
-                loopnum = 0	
+			#if the message is not by server automod
+            if len(split_msg) >= 3:
+                if split_msg[1] == 'pm' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot':
+                    await self.send_message("groupchat-srbot-sinnohremakes", ["/invite"+split_msg[2]])
+                if split_msg[0] == '>groupchat-srbot-sinnohremakes\n':
+                    #reset timer
+                    loopnum = 0	
 				
-            if split_msg[0] == '>groupchat-srbot-sinnohremakes\n' and split_msg[1] == 'c:' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot': #chat msg
-                if '-say' in split_msg[4]: #-say /cood
-                    #say the thing after -say
-                    await self.send_message("groupchat-srbot-sinnohremakes", [split_msg[4][5:len(split_msg[4])]])
+                if split_msg[0] == '>groupchat-srbot-sinnohremakes\n' and split_msg[1] == 'c:' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot': #chat msg
+                    #if the msg is longer than "-say "
+                    if len(split_msg[4]) > 5:
+                        if split_msg[4][0:4] == "-say": #-say /cood
+                            #send the thing after -say
+                            await self.send_message("groupchat-srbot-sinnohremakes", [split_msg[4][5:len(split_msg[4])]])
 					
             loopnum += 1
             logger.debug(str(loopnum))
