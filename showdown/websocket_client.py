@@ -11,9 +11,7 @@ from showdown.engine.evaluate import Scoring
 from showdown.battle import Pokemon
 from showdown.battle import LastUsedMove
 from showdown.battle_modifier import async_update_battle
-
-from threading import Thread
-from multiprocessing import Process
+from random import randint
 
 import logging
 logger = logging.getLogger(__name__)
@@ -137,7 +135,8 @@ class PSWebsocketClient:
             logger.debug(str(loopnum))
 			
             if loopnum == 300:
-                await self.send_message('groupchat-srbot-sinnohremakes', ["This message was sent to prevent the chat from dying."])
+                random = randint(1,1000)
+                await self.send_message('groupchat-srbot-sinnohremakes', [str(random)])
                 await self.send_message('groupchat-srbot-sinnohremakes', ["/hidetext SRbot"])
                 logger.debug("prevented chat death")
                 loopnum = 0
