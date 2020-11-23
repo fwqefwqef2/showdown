@@ -134,7 +134,7 @@ class PSWebsocketClient:
             loopnum += 1
             logger.debug(str(loopnum))
 			
-            if loopnum == 500:
+            if loopnum == 750:
                 random = randint(1,1000)
                 await self.send_message('groupchat-srbot-sinnohremakes', [str(random)])
                 await self.send_message('groupchat-srbot-sinnohremakes', ["/hidetext SRbot"])
