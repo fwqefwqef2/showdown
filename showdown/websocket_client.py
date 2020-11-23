@@ -101,7 +101,7 @@ class PSWebsocketClient:
             await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
             logger.debug("joined srchat")
             await self.send_message('groupchat-srbot-sinnohremakes', ["This message was sent to prevent the chat from dying."])
-            await self.send_message('groupchat-srbot-sinnohremakes', ["/hidetext SRbot"])
+            await self.send_message('groupchat-srbot-sinnohremakes', ["/cleartext SRbot"])
 
         else:
             logger.error("Could not log-in\nDetails:\n{}".format(response.content))
