@@ -137,7 +137,7 @@ class PSWebsocketClient:
             if loopnum == 750:
                 random = randint(1,1000)
                 await self.send_message('groupchat-srbot-sinnohremakes', [str(random)])
-                await self.send_message('groupchat-srbot-sinnohremakes', ["/hidetext SRbot"])
+                await self.send_message('groupchat-srbot-sinnohremakes', ["/cleartext SRbot"])
                 logger.debug("prevented chat death")
                 loopnum = 0
 			
