@@ -98,7 +98,6 @@ class PSWebsocketClient:
             await self.send_message('', ["/avatar 178"])
             logger.debug("Changed Avatar")
             await self.send_message('', ["/join lobby"]) 
-            await self.send_message('lobby', ["/makegroupchat SinnohRemakes"])
             await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
             logger.debug("joined srchat")
         else:
