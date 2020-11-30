@@ -132,7 +132,6 @@ class PSWebsocketClient:
             logger.debug(str(loopnum))
 			
             if loopnum == 1000:
-                await self.send_message('lobby', ["/makegroupchat SinnohRemakes"])
                 await self.send_message('lobby', ["/leave groupchat-srbot-sinnohremakes"])
                 await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
                 logger.debug("prevented chat death")
