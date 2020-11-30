@@ -98,11 +98,9 @@ class PSWebsocketClient:
             await self.send_message('', ["/avatar 178"])
             logger.debug("Changed Avatar")
             await self.send_message('', ["/join lobby"]) 
+            await self.send_message('lobby', ["/makegroupchat SinnohRemakes"])
             await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
             logger.debug("joined srchat")
-            await self.send_message('groupchat-srbot-sinnohremakes', ["This message was sent to prevent the chat from dying."])
-            await self.send_message('groupchat-srbot-sinnohremakes', ["/cleartext SRbot"])
-
         else:
             logger.error("Could not log-in\nDetails:\n{}".format(response.content))
             raise LoginError("Could not log-in")
@@ -135,9 +133,9 @@ class PSWebsocketClient:
             logger.debug(str(loopnum))
 			
             if loopnum == 750:
-                random = randint(1,1000)
-                await self.send_message('groupchat-srbot-sinnohremakes', [str(random)])
-                await self.send_message('groupchat-srbot-sinnohremakes', ["/cleartext SRbot"])
+                await self.send_message('lobby', ["/makegroupchat SinnohRemakes"])
+                await self.send_message('lobby', ["/leave groupchat-srbot-sinnohremakes"])
+                await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
                 logger.debug("prevented chat death")
                 loopnum = 0
 			
