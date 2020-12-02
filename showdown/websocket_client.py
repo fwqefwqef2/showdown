@@ -98,6 +98,7 @@ class PSWebsocketClient:
             await self.send_message('', ["/avatar 178"])
             logger.debug("Changed Avatar")
             await self.send_message('', ["/join lobby"]) 
+            await self.send_message('lobby', ["/makegroupchat SinnohRemakes"])
             await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
             logger.debug("joined srchat")
         else:
@@ -118,20 +119,21 @@ class PSWebsocketClient:
                 if split_msg[1] == 'pm' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot':
                     await self.send_message("groupchat-srbot-sinnohremakes", ["/invite"+split_msg[2]])
 				#case 2 - someone talks in srchat
-                if split_msg[1] == 'c:' and split_msg[0] == '>groupchat-srbot-sinnohremakes\n' and split_msg[2] != '!SRbot' and split_msg[2] != ' SRbot': #chat msg
+                if split_msg[0] == '>groupchat-srbot-sinnohremakes\n' and split_msg[1] == 'c:' and 'SRbot' not in split_msg[3]: #chat msg
                     #if the msg is longer than "-say "
                     if len(split_msg[4]) > 5:
                         if split_msg[4][0:4] == "-say": #-say /cood
                             #send the thing after -say
                             await self.send_message("groupchat-srbot-sinnohremakes", [split_msg[4][5:len(split_msg[4])]])
 							
-                if split_msg[1] == 'error':
+                if split_msg[1] == 'error' and "A group chat named 'SinnohRemakes' already exists." not in split_msg[2]:
                     await self.send_message("groupchat-srbot-sinnohremakes", ["Error: "+split_msg[2]])
 					
             loopnum += 1
             logger.debug(str(loopnum))
 			
-            if loopnum == 500:
+            if loopnum == 700:
+                await self.send_message('lobby', ["/makegroupchat SinnohRemakes"])
                 await self.send_message('lobby', ["/leave groupchat-srbot-sinnohremakes"])
                 await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
                 logger.debug("prevented chat death")
