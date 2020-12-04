@@ -6,6 +6,7 @@ import time
 import config
 import sys
 import time
+import os
 
 from showdown.engine.evaluate import Scoring
 from showdown.battle import Pokemon
@@ -105,8 +106,15 @@ class PSWebsocketClient:
             logger.error("Could not log-in\nDetails:\n{}".format(response.content))
             raise LoginError("Could not log-in")
 
+    def restart_program(self):
+        """Restarts the current program.
+        Note: this function does not return. Any cleanup action (like
+        saving data) must be done before calling this function."""
+        python = sys.executable
+        os.execl(python, python, * sys.argv)
+
+
     async def receive_pm(self):
-        logger.debug("awating pms")
         loopnum = 0 #for the inactive timer
         while True:
             msg = await self.receive_message()
@@ -129,12 +137,13 @@ class PSWebsocketClient:
 					
             loopnum += 1
 			
-            if loopnum == 700:
-                await self.send_message('lobby', ["/makegroupchat SinnohRemakes"])
-                await self.send_message('lobby', ["/leave groupchat-srbot-sinnohremakes"])
-                await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
-                logger.debug("prevented chat death")
-                loopnum = 0
-			
+            if loopnum == 500:
+                #await self.send_message('lobby', ["/makegroupchat SinnohRemakes"])
+                #await self.send_message('lobby', ["/leave groupchat-srbot-sinnohremakes"])
+                #await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
+                #logger.debug("prevented chat death")
+                #loopnum = 0
+                self.restart_program()	
+				
     async def accept_challenge(self):
         await self.receive_pm()
