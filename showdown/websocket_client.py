@@ -110,9 +110,7 @@ class PSWebsocketClient:
         loopnum = 0 #for the inactive timer
         while True:
             msg = await self.receive_message()
-            logger.debug(msg)
             split_msg = msg.split('|')
-            logger.debug(split_msg)
 			#if the message is not by server automod
             if len(split_msg) >= 3:
                 #case 1 - bot gets a pm
@@ -130,7 +128,6 @@ class PSWebsocketClient:
                     await self.send_message("groupchat-srbot-sinnohremakes", ["Error: "+split_msg[2]])
 					
             loopnum += 1
-            logger.debug(str(loopnum))
 			
             if loopnum == 700:
                 await self.send_message('lobby', ["/makegroupchat SinnohRemakes"])
