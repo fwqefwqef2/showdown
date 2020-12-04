@@ -138,12 +138,12 @@ class PSWebsocketClient:
             loopnum += 1
 			
             if loopnum == 500:
-                #await self.send_message('lobby', ["/makegroupchat SinnohRemakes"])
-                #await self.send_message('lobby', ["/leave groupchat-srbot-sinnohremakes"])
-                #await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
-                #logger.debug("prevented chat death")
-                #loopnum = 0
-                self.restart_program()	
+                await self.send_message('lobby', ["/makegroupchat SinnohRemakes"])
+                await self.send_message('lobby', ["/leave groupchat-srbot-sinnohremakes"])
+                await self.send_message('lobby', ["/join groupchat-srbot-sinnohremakes"])
+                logger.debug("prevented chat death")
+                loopnum = 0
+                #self.restart_program()	
 				
     async def accept_challenge(self):
         await self.receive_pm()
